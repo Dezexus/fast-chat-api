@@ -1,4 +1,3 @@
-```markdown
 # FastChat API
 
 Асинхронный REST API для управления чатами и сообщениями.
@@ -11,6 +10,7 @@
 ## Установка и запуск
 
 1. **Создать файл `.env`** в корне:
+
    ```ini
    POSTGRES_USER=user
    POSTGRES_PASSWORD=password
