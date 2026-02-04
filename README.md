@@ -33,7 +33,7 @@
 *   `POST /api/v1/chats/` — Создать чат.
 *   `POST /api/v1/chats/{id}/messages/` — Отправить сообщение.
 *   `GET /api/v1/chats/{id}?limit=20` — Получить чат и последние сообщения.
-*   `DELETE /api/v1/chats/{id}` — Удалить чат (каскадно).
+*   `DELETE /api/v1/chats/{id}` — Удалить чат.
 
 ## Тесты
 
