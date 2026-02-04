@@ -27,7 +27,7 @@
 
 ## Использование
 
-Документация (Swagger): [http://localhost:8000/docs](http://localhost:8000/docs)
+Документация: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ### API Endpoints
 *   `POST /api/v1/chats/` — Создать чат.
