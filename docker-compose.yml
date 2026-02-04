@@ -10,7 +10,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    # ДОБАВЛЕНО: Проверка, что база реально готова принимать запросы
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d fastchat"]
       interval: 3s
