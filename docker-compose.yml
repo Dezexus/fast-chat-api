@@ -27,7 +27,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://user:password@db:5432/fastchat
     depends_on:
       db:
-        condition: service_healthy  # <--- Ждем, пока healthcheck станет зеленым
+        condition: service_healthy
 
 volumes:
   postgres_data:
