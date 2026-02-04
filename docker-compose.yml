@@ -9,11 +9,17 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
+    # ДОБАВЛЕНО: Проверка, что база реально готова принимать запросы
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d fastchat"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
 
   web:
     build: .
-    command: sh -c "while ! nc -z db 5432; do sleep 1; done; alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
       - .:/app
     ports:
@@ -21,7 +27,8 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://user:password@db:5432/fastchat
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # <--- Ждем, пока healthcheck станет зеленым
 
 volumes:
   postgres_data:
