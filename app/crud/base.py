@@ -12,9 +12,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def get(self, db: AsyncSession, id: Any) -> Optional[ModelType]:
+    async def get(self, db: AsyncSession, obj_id: Any) -> Optional[ModelType]:
         """Возвращает запись по ID."""
-        return await db.get(self.model, id)
+        return await db.get(self.model, obj_id)
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         """Создает новую запись."""
@@ -24,9 +24,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType]):
         await db.commit()
         return db_obj
 
-    async def remove(self, db: AsyncSession, *, id: int) -> Optional[ModelType]:
+    async def remove(self, db: AsyncSession, *, obj_id: int) -> Optional[ModelType]:
         """Удаляет запись по ID."""
-        obj = await db.get(self.model, id)
+        obj = await db.get(self.model, obj_id)
         if obj:
             await db.delete(obj)
             await db.commit()

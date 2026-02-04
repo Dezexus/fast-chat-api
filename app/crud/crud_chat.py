@@ -23,8 +23,6 @@ class CRUDChat(CRUDBase[Chat, ChatCreate]):
         db_obj = Message(chat_id=chat_id, text=obj_in.text)
         db.add(db_obj)
         await db.commit()
-        # refresh не обязателен, если мы возвращаем объект, но полезен для получения created_at от БД
-        await db.refresh(db_obj)
         return db_obj
 
     async def get_with_messages(

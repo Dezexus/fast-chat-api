@@ -1,16 +1,16 @@
+```markdown
 # FastChat API
 
 Асинхронный REST API для управления чатами и сообщениями.
 
 ## Стек
-*   **Core:** Python 3.11, FastAPI, Uvicorn
+*   **Core:** Python 3.13, FastAPI, Uvicorn
 *   **DB:** PostgreSQL, Asyncpg, SQLAlchemy 2.0, Alembic
 *   **Infra:** Docker, Docker Compose
 
 ## Установка и запуск
 
 1. **Создать файл `.env`** в корне:
-
    ```ini
    POSTGRES_USER=user
    POSTGRES_PASSWORD=password

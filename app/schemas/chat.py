@@ -1,20 +1,15 @@
-from typing import List
+from typing import List, Annotated
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, StringConstraints, ConfigDict
 from .message import MessageRead
 
 
 class ChatBase(BaseModel):
     """Базовая схема чата."""
 
-    title: str = Field(..., min_length=1, max_length=200)
-
-    @field_validator("title", mode="before")
-    @classmethod
-    def trim_title(cls, v: str) -> str:
-        if isinstance(v, str):
-            return v.strip()
-        return v
+    title: Annotated[
+        str, StringConstraints(min_length=1, max_length=200, strip_whitespace=True)
+    ]
 
 
 class ChatCreate(ChatBase):

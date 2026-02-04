@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 async def create_chat(
     chat_in: ChatCreate, db: AsyncSession = Depends(get_db)
 ) -> ChatRead:
-    """Создает новый чат."""
+    """Инициализирует новый чат."""
     logger.info(f"Request to create chat with title: '{chat_in.title}'")
     chat = await crud.chat.create(db, obj_in=chat_in)
     logger.info(f"Chat created successfully with id={chat.id}")
@@ -23,48 +23,52 @@ async def create_chat(
 
 
 @router.post(
-    "/{id}/messages/", response_model=MessageRead, status_code=status.HTTP_201_CREATED
+    "/{chat_id}/messages/",
+    response_model=MessageRead,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_message(
-    id: int, message_in: MessageCreate, db: AsyncSession = Depends(get_db)
+    chat_id: int, message_in: MessageCreate, db: AsyncSession = Depends(get_db)
 ) -> MessageRead:
-    """Добавляет сообщение в указанный чат."""
-    logger.debug(f"Request to add message to chat_id={id}")
+    """Публикует сообщение в указанный чат."""
+    logger.debug(f"Request to add message to chat_id={chat_id}")
 
-    chat = await crud.chat.get(db, id=id)
+    chat = await crud.chat.get(db, obj_id=chat_id)
     if not chat:
-        logger.warning(f"Failed to add message: Chat with id={id} not found")
+        logger.warning(f"Failed to add message: Chat with id={chat_id} not found")
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    message = await crud.chat.create_message(db, chat_id=id, obj_in=message_in)
-    logger.info(f"Message created in chat_id={id}, message_id={message.id}")
+    message = await crud.chat.create_message(db, chat_id=chat_id, obj_in=message_in)
+    logger.info(f"Message created in chat_id={chat_id}, message_id={message.id}")
     return message
 
 
-@router.get("/{id}", response_model=ChatWithMessages)
+@router.get("/{chat_id}", response_model=ChatWithMessages)
 async def get_chat(
-    id: int, limit: int = Query(20, ge=1, le=100), db: AsyncSession = Depends(get_db)
+    chat_id: int,
+    limit: int = Query(20, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
 ) -> ChatWithMessages:
-    """Возвращает информацию о чате и последние сообщения."""
-    logger.debug(f"Fetching chat_id={id} with limit={limit}")
+    """Загружает историю чата с пагинацией."""
+    logger.debug(f"Fetching chat_id={chat_id} with limit={limit}")
 
-    chat = await crud.chat.get_with_messages(db, chat_id=id, limit=limit)
+    chat = await crud.chat.get_with_messages(db, chat_id=chat_id, limit=limit)
     if not chat:
-        logger.warning(f"Chat retrieval failed: Chat with id={id} not found")
+        logger.warning(f"Chat retrieval failed: Chat with id={chat_id} not found")
         raise HTTPException(status_code=404, detail="Chat not found")
 
     return chat
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_chat(id: int, db: AsyncSession = Depends(get_db)):
-    """Удаляет чат и все связанные сообщения."""
-    logger.info(f"Request to delete chat_id={id}")
+@router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_chat(chat_id: int, db: AsyncSession = Depends(get_db)):
+    """Удаляет чат и всю связанную переписку."""
+    logger.info(f"Request to delete chat_id={chat_id}")
 
-    chat = await crud.chat.remove(db, id=id)
+    chat = await crud.chat.remove(db, obj_id=chat_id)
     if not chat:
-        logger.warning(f"Deletion failed: Chat with id={id} not found")
+        logger.warning(f"Deletion failed: Chat with id={chat_id} not found")
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    logger.info(f"Chat_id={id} and its messages deleted successfully")
+    logger.info(f"Chat_id={chat_id} and its messages deleted successfully")
     return None
